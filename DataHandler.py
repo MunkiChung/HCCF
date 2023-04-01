@@ -44,13 +44,16 @@ def transToLsts(mat, mask=False, norm=False):
 	return indices, data, shape
 
 class DataHandler:
-	def __init__(self):
-		if args.data == 'yelp':
+	def __init__(self, data_type=None, target_year=None):
+		if data_type is not None:
+			predir = f'Data/{data_type}/{target_year}/'
+		elif args.data == 'yelp':
 			predir = 'Data/yelp/'
 		elif args.data == 'ml10m':
 			predir = 'Data/ml10m/'
 		elif args.data == 'amazon':
 			predir = 'Data/amazon/'
+
 		self.predir = predir
 		self.trnfile = predir + 'trnMat.pkl'
 		self.tstfile = predir + 'tstMat.pkl'
