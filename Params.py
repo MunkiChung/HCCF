@@ -30,7 +30,8 @@ def parse_args():
 	parser.add_argument('--percent', default=0.0, type=float, help='percent of noise for noise robust test')
 	parser.add_argument('--tstNum', default=99, type=int, help='Numer of negative samples while testing, -1 for all negatives')
 	parser.add_argument('--data_type', default='CRSP', type=str, help='name of dataset')
-	parser.add_argument('--target_year', default=2006, type=int, help='name of dataset')
+	parser.add_argument('--target_year', default=2006, type=int, help='target_year')
+	parser.add_argument('--positive_score_cri', default=0.3, type=float, help='positive_stop_cri')
 	return parser.parse_args()
 args = parse_args()
 # tianchi
