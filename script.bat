@@ -1,4 +1,7 @@
 @echo off
+
+call conda activate mvecf
+
 call python labcode_efficient.py --temp 1 --ssl_reg 1e-6 --lr 1e-2 --gnn_layer 2 --data_type "CRSP" --target_year 2009 --positive_score_cri 0.147881246
 call python labcode_efficient.py --temp 1 --ssl_reg 1e-6 --lr 1e-2 --gnn_layer 2 --data_type "CRSP" --target_year 2010 --positive_score_cri 0.144944502
 call python labcode_efficient.py --temp 1 --ssl_reg 1e-6 --lr 1e-2 --gnn_layer 2 --data_type "CRSP" --target_year 2011 --positive_score_cri 0.144274695
