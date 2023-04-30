@@ -6,7 +6,7 @@ def parse_args():
 	parser.add_argument('--batch', default=256, type=int, help='batch size')
 	parser.add_argument('--sslbatch', default=4096, type=int, help='SSL batch size')
 	parser.add_argument('--reg', default=1e-5, type=float, help='weight decay regularizer')
-	parser.add_argument('--epoch', default=1000, type=int, help='number of epochs')
+	parser.add_argument('--epoch', default=500, type=int, help='number of epochs')
 	parser.add_argument('--decay', default=0.96, type=float, help='weight decay rate')
 	parser.add_argument('--save_path', default='tem', help='file name to save model and training record')
 	parser.add_argument('--latdim', default=32, type=int, help='embedding size')

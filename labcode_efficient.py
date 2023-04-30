@@ -1,6 +1,9 @@
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+from mvecf.ImplicitCF import ImplicitCF
+import pandas as pd
+from mvecf.load import get_data
 import numpy as np
 from Params import args
 import Utils.TimeLogger as logger
@@ -21,10 +24,11 @@ def save_pickle(data, name):
 
 
 class Recommender:
-    def __init__(self, sess, handler, save_path):
+    def __init__(self, sess, handler, save_path, data_sampler: ImplicitCF):
         self.sess = sess
         self.handler = handler
         self.save_path = save_path
+        self.data_sampler = data_sampler
         print('USER', args.user, 'ITEM', args.item)
         self.metrics = dict()
         mets = ['Loss', 'preLoss', 'Recall', 'NDCG']
@@ -66,8 +70,8 @@ class Recommender:
             if ep % args.tstEpoch == 0:
                 self.saveHistory()
             print()
-            if self.check_early_stop():
-                break
+            # if self.check_early_stop():
+            #     break
         reses = self.testEpoch(ep)
         log(self.makePrint('Test', args.epoch, reses, True))
         self.saveHistory()
@@ -203,8 +207,7 @@ class Recommender:
                 poslocs = [np.random.choice(args.item)]
                 neglocs = [poslocs[0]]
             else:
-                poslocs = np.random.choice(posset, sampNum)
-                neglocs = negSamp(temLabel[i], sampNum, args.item)
+                _, poslocs, neglocs = self.data_sampler.data_loader(sampNum)
             for j in range(sampNum):
                 posloc = poslocs[j]
                 negloc = neglocs[j]
@@ -332,9 +335,10 @@ class Recommender:
 
 if __name__ == '__main__':
     import time
+
     data_type = args.data_type
     target_year = args.target_year
-
+    positive_score_cri = args.positive_score_cri
     save_path = f"./{data_type}/{target_year}/HCCF"
     # save_path = args.save_path
     if not os.path.exists(save_path):
@@ -348,8 +352,18 @@ if __name__ == '__main__':
     handler.LoadData()
     log('Load Data')
 
+    holdings_data, factor_params = get_data(data_type, target_year)
+    train = pd.DataFrame(holdings_data["train_data"].T, columns=["userID", "itemID", "rating"])
+    test = pd.DataFrame(holdings_data["valid_data"].T, columns=["userID", "itemID", "rating"])
+    reg_param_mv = 10
+    gamma = 3
+    alpha = 10
+
+    data_sampler = ImplicitCF(train=train, test=test, alpha=alpha,
+                          factor_params=factor_params, reg_param_mv=reg_param_mv, gamma=gamma,
+                          positive_score_cri=positive_score_cri)
     with tf.compat.v1.Session(config=config) as sess:
-        recom = Recommender(sess, handler, save_path)
+        recom = Recommender(sess, handler, save_path, data_sampler=data_sampler)
         recom.run()
         sess.close()
 
