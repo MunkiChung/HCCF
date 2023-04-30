@@ -339,7 +339,7 @@ if __name__ == '__main__':
     data_type = args.data_type
     target_year = args.target_year
     positive_score_cri = args.positive_score_cri
-    save_path = f"./{data_type}/{target_year}/HCCF"
+    save_path = f"./{data_type}/{target_year}/HCCF_mv"
     # save_path = args.save_path
     if not os.path.exists(save_path):
         os.makedirs(save_path)
